@@ -29,7 +29,7 @@ class MLService:
         logger.info("Starting ML pipeline. Target: %s, Shape: %s", target_col, df.shape)
 
         # Subsample large datasets to stay within free-tier memory limits
-        max_rows = 20_000
+        max_rows = 10_000
         if len(df) > max_rows:
             df = df.sample(n=max_rows, random_state=42).reset_index(drop=True)
             logger.info("Subsampled dataset to %d rows for ML training", max_rows)
