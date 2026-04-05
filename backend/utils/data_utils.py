@@ -32,7 +32,7 @@ def detect_column_type(series: pd.Series) -> str:
     if len(series) > 0:
         sample_str = series.dropna().astype(str).head(50)
         try:
-            parsed = pd.to_datetime(sample_str, infer_datetime_format=True, errors="coerce")
+            parsed = pd.to_datetime(sample_str, errors="coerce")
             if parsed.notna().mean() > 0.8:
                 return "datetime"
         except Exception:
