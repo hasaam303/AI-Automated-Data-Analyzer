@@ -38,10 +38,13 @@ def _chart(fig: go.Figure, chart_type: str, title: str, description: str, column
 
 
 def histogram(df: pd.DataFrame, col: str) -> ChartData:
+    data = df[col].dropna()
+    if len(data) > 10_000:
+        data = data.sample(n=10_000, random_state=42)
     fig = go.Figure()
     fig.add_trace(
         go.Histogram(
-            x=df[col].dropna(),
+            x=data,
             nbinsx=40,
             marker_color=PALETTE[0],
             opacity=0.85,
@@ -165,9 +168,12 @@ def feature_importance_chart(importance: Dict[str, float], title: str = "Feature
 
 
 def scatter_with_target(df: pd.DataFrame, col1: str, col2: str, target_col: Optional[str] = None) -> ChartData:
-    color = df[target_col].astype(str) if target_col else None
+    plot_df = df.dropna(subset=[col1, col2])
+    if len(plot_df) > 5_000:
+        plot_df = plot_df.sample(n=5_000, random_state=42)
+    color = plot_df[target_col].astype(str) if target_col else None
     fig = px.scatter(
-        df.dropna(subset=[col1, col2]),
+        plot_df,
         x=col1,
         y=col2,
         color=color,

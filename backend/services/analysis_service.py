@@ -25,6 +25,13 @@ class AnalysisService:
     ) -> EDAResults:
         logger.info("Starting EDA on dataset with shape %s", df.shape)
 
+        # Subsample very large datasets to prevent OOM on free-tier hosting
+        max_eda_rows = 30_000
+        full_row_count = len(df)
+        if len(df) > max_eda_rows:
+            df = df.sample(n=max_eda_rows, random_state=42).reset_index(drop=True)
+            logger.info("Subsampled dataset from %d to %d rows for EDA", full_row_count, max_eda_rows)
+
         # ── 1. Detect column types ────────────────────────────────────────────
         col_types: Dict[str, str] = {col: detect_column_type(df[col]) for col in df.columns}
 
