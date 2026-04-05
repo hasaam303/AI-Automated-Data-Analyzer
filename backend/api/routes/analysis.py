@@ -22,8 +22,7 @@ def run_analysis(
     record = storage_service.get(db, analysis_id)
     if not record:
         raise HTTPException(status_code=404, detail="Analysis not found.")
-    if record.status not in ("uploaded", "analyzed", "completed"):
-        raise HTTPException(status_code=409, detail=f"Analysis is in state '{record.status}'.")
+    # Allow re-running EDA from any state (handles stuck "analyzing" after crashes)
 
     storage_service.set_status(db, analysis_id, "analyzing")
     try:

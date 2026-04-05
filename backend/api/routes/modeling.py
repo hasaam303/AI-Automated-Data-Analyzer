@@ -23,7 +23,8 @@ def run_modeling(
     record = storage_service.get(db, analysis_id)
     if not record:
         raise HTTPException(status_code=404, detail="Analysis not found.")
-    if record.status not in ("analyzed", "completed"):
+    # Require EDA results to exist, regardless of status field (handles stuck states)
+    if not record.eda_results:
         raise HTTPException(status_code=409, detail="Run EDA before modeling.")
 
     storage_service.set_status(db, analysis_id, "modeling")
